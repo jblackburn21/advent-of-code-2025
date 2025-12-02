@@ -1,0 +1,22 @@
+{:paths ["src"]
+ :deps {io.github.jjcomer/aoc-clj-elf {:mvn/version "0.1.2"}}
+ :tasks {:requires ([babashka.fs :as fs]
+                    [aoc-clj-elf.core :as aoc])
+         -input-dir "input"
+         -input {:depends [-input-dir]
+                 :task (fs/create-dirs -input-dir)}
+         -auth-file "auth.edn"
+         get {:doc "Fetches a specific input (defaults to today)"
+              :depends [-auth-file -input]
+              :task (aoc/get-input-task -auth-file -input *command-line-args*)}
+         new {:doc "Creates a skeleton solution for a specific day"
+              :task (aoc/gen-new-task *command-line-args*)}
+         solve {:doc "Executes the solution against the input"
+                :depends [-auth-file -input]
+                :task (aoc/solve-task -input -auth-file *command-line-args*)}
+         test {:doc "Tests the solution agaist a sample"
+               :task (aoc/run-tests-task *command-line-args*)}
+         auth {:doc "Set the auth for the Advent of Code API"
+               :depends [-auth-file]
+               :task (aoc/store-auth-task -auth-file *command-line-args*)}}}
+ 
